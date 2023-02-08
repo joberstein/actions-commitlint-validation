@@ -1,0 +1,30 @@
+{
+  "name": "actions-commitlint-validation",
+  "version": "1.0.0",
+  "description": "A Github action that validates commits on different events.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joberstein/actions-commitlint-validation.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/joberstein/actions-commitlint-validation/issues"
+  },
+  "homepage": "https://github.com/joberstein/actions-commitlint-validation#readme",
+  "dependencies": {
+    "@actions/core": "^1.10.0",
+    "@commitlint/config-angular": "^17.4.2",
+    "@commitlint/config-conventional": "^17.4.2"
+  },
+  "devDependencies": {
+    "@types/node": "^18.11.19",
+    "typescript": "^4.9.5"
+  }
+}
