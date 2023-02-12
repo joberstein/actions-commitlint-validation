@@ -1,54 +1,66 @@
-import { execSync } from 'child_process';
+import { ExecSyncOptions, execSync } from 'child_process';
+import commitlint from './commitlint';
+import preinstall from './preinstall';
+import { setFailed } from '@actions/core';
 
-const commitlint = (args: CommitlintArgs) => {
-    const argString = Object.entries(args)
-        .filter(([, argVal]) => !['', null, undefined, false].includes(argVal))
-        .map(([argName, argVal]) => `--${argName}` + (typeof argName === 'boolean' ? '' : `=${argVal}`))
-        .join(' ');
+export default async () => {
+    const {
+        INPUT_BASE_REF: source,
+        INPUT_HEAD_REF: destination,
+        INPUT_TARGET_REF: target,
+        INPUT_EXTRA_CONFIG: extraConfig,
+    } = process.env;
+    
+    try {
+        preinstall(extraConfig);
+        
+        if (source) {
+            execSync(`git checkout ${source}`);
+        }
 
-    execSync(`npm run commitlint ${argString}`);
+        if (destination) {
+            execSync(`git checkout ${destination}`);
+        }
+
+        await validateCommits({
+            source,
+            destination,
+            target,
+        });
+    } catch (e) {
+        setFailed((e as Error).message);
+    }
 }
 
-const getCommitFromRange = ({ source, destination }: CommitRange): string =>
-    execSync(`git rev-list ${source}..${destination} | tail -l`)
-        .toString()
-        .trim();
+/**
+ * Validate all the commits between two refs if possible. If not, validate a target
+ * commit instead. If the target commit is also absent, validate all commits.
+ */
+export const validateCommits = async (
+    { target, source, destination }: BuildCommitlintArgs, 
+    options?: ExecSyncOptions
+) => {
+    const fromCommit = getCommitFromRange({ source, destination }, options) || target;
+    
+    await commitlint({ 
+        from: fromCommit ? `${fromCommit}^` : undefined, 
+        cwd: options?.cwd?.toString() || undefined,
+    });
+}
 
-const buildCommitlintArgs = ({ 
-    event, 
-    config, 
-    source, 
-    destination, 
-    target 
-}: BuildCommitlintArgs): CommitlintArgs => {
-    const commitlintArgs: CommitlintArgs = {
-        verbose: true,
-        config,
+/**
+ * Get the initial commit from two refs, or an empty string if no commit found.
+ */
+const getCommitFromRange = (
+    { source, destination }: CommitRange, 
+    options?: ExecSyncOptions
+): string => {
+    if (source && destination) {
+        try {
+            const command = `git rev-list ${source}..${destination} | tail -n 1`;
+            return execSync(command, options).toString().trim();
+        } catch {}
     }
 
-    const fromCommit = event.startsWith('pull_request')
-        ? getCommitFromRange({ source, destination })
-        : target;
-
-    return { ...commitlintArgs, from: `${fromCommit}^` };
-}
-
-export default () => {
-    const { 
-        INPUT_BASE_REF: source = '',
-        INPUT_HEAD_REF: destination = '',
-        INPUT_TARGET_REF: target = '',
-        INPUT_EVENT: event = '',
-        INPUT_CONFIG_PATH: config = '',
-    } = process.env;
-
-    const commitlintArgs = buildCommitlintArgs({ 
-        event, 
-        source, 
-        destination, 
-        target, 
-        config, 
-    });
-
-    commitlint(commitlintArgs);
+    return '';
 }
