@@ -1,6 +1,6 @@
 interface CommitRange {
-    source: string;
-    destination: string;
+    source?: string;
+    destination?: string;
 }
 
 interface CommitlintArgs {
@@ -10,9 +10,17 @@ interface CommitlintArgs {
 }
 
 interface BuildCommitlintArgs {
-    event: string;
-    config: string;
-    source: string;
-    destination: string;
-    target: string;
+    config?: string;
+    source?: string;
+    destination?: string;
+    target?: string;
+}
+
+// Copied from '@commitlint/read'
+interface GetCommitMessageOptions {
+    cwd?: string;
+    from?: string;
+    to?: string;
+    edit?: boolean | string;
+    gitLogArgs?: string;
 }
