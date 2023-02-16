@@ -3,7 +3,6 @@ description: Validate commits with commitlint using Github Actions.
 author: Jesse Oberstein
 runs:
   using: 'node16'
-  pre: 'dist/preinstall.js'
   main: 'dist/index.js'
 inputs:
   base_ref:
