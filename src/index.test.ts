@@ -10,7 +10,7 @@ describe("src/index", () => {
     const originalDirectory = process.cwd();
 
     const commitlint = jest.spyOn(commitlintExec, 'default');
-    const actionsInfo = jest.spyOn(actions, "info");
+    const consoleInfo = jest.spyOn(console, "info");
     const setFailed = jest.spyOn(actions, "setFailed");
 
     const getNthCommitBack = (numBack: number) => execSync(`git rev-parse HEAD~${numBack - 1}`, options)
@@ -72,7 +72,7 @@ describe("src/index", () => {
     }
 
     afterEach(() => {
-        expect(actionsInfo).toHaveBeenCalled();
+        expect(consoleInfo).toHaveBeenCalled();
     });
 
     describe("Integration Tests", () => {
