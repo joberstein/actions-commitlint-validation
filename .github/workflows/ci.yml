@@ -39,6 +39,12 @@ jobs:
           target_ref: ${{ env.GITHUB_SHA }}
           extra_config: "@joberstein12/commitlint-config"
 
+      - name: Debug
+        run: |
+          echo $GITHUB_BASE_REF
+          echo $GITHUB_HEAD_REF
+          echo $GITHUB_SHA
+
       - name: Set default git branch
         run: git config --global init.defaultBranch master
 
