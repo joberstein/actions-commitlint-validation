@@ -51,7 +51,6 @@ describe("src/index", () => {
             "git init",
             `git config user.email "actions@github.com"`,
             `git config user.name "CI Pipeline"`,
-            `git config init.defaultBranch master`,
             "rm -rf .git/hooks",
             "mkdir src",
             "touch src/test.txt",

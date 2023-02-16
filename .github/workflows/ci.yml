@@ -39,6 +39,9 @@ jobs:
           target_ref: ${{ env.GITHUB_SHA }}
           extra_config: "@joberstein12/commitlint-config"
 
+      - name: Set default git branch
+        run: git config --global init.defaultBranch master
+
       - name: Execute Tests
         run: npm test -- --ci
 
