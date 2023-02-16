@@ -6,16 +6,6 @@ runs:
   pre: 'dist/setup.js'
   main: 'dist/index.js'
 inputs:
-  commitlint_version:
-    description: The version of commitlint to use. If unspecified, the latest version will be installed.
-
-  config_path:
-    description: The relative path to the commitlint config file.
-
-  event:
-    description: The Github event that triggered the workflow that uses this action.
-    required: true
-
   base_ref:
     description: The source of pull request that triggered this workflow (required for pull requests).
 
