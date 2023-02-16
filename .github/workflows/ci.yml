@@ -20,7 +20,7 @@ jobs:
           fetch-depth: 0
 
       - name: Validate Commits
-        uses: .
+        uses: ./
         with:
           base_ref: ${{ env.GITHUB_BASE_REF }}
           head_ref: ${{ env.GITHUB_HEAD_REF }}
