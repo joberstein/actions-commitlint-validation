@@ -49,6 +49,8 @@ describe("src/index", () => {
     const intializeGitRepo = () => {
         execSync([
             "git init",
+            `git config user.email "actions@github.com"`,
+            `git config user.name "CI Pipeline"`,
             "rm -rf .git/hooks",
             "mkdir src",
             "touch src/test.txt",
