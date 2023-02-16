@@ -42,9 +42,6 @@ jobs:
       - name: Execute Tests
         run: npm test -- --ci
 
-      - name: Build Application
-        run: npm build
-
       - name: Deploy Application
         uses: cycjimmy/semantic-release-action@v3
         if: github.ref_name == 'master'
