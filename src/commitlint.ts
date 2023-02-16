@@ -2,7 +2,6 @@ import load from "@commitlint/load";
 import read from "@commitlint/read";
 import lint from "@commitlint/lint";
 import format from "@commitlint/format";
-import { info, warning, error } from "@actions/core";
 
 /**
  * Run commitlint and print the formatted results. 
@@ -23,7 +22,7 @@ export default async (args: GetCommitMessageOptions) => {
     const results = await Promise.all(lintOutcomes);
     const formatted = format({ results }, { color: true , verbose: true });
     
-    info(formatted);
+    console.info(formatted);
 
     const warnings = [];
     const errors = [];
@@ -34,11 +33,11 @@ export default async (args: GetCommitMessageOptions) => {
     });
 
     if (!!warnings.length) {
-        warning(`${warnings.length} warning(s) found.`);
+        console.warn(`${warnings.length} warning(s) found.`);
     }
 
     if (!!errors.length) {
-        error(`${errors.length} error(s) found.`);
+        console.error(`${errors.length} error(s) found.`);
     }
 
     if (results.some(result => !result.valid)) {
