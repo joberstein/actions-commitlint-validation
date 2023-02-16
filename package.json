@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/joberstein/actions-commitlint-validation#readme",
   "dependencies": {
+    "@actions/core": "^1.10.0",
     "commitlint": "^17.4.2"
   },
   "devDependencies": {
