@@ -1,12 +1,12 @@
 import { execSync } from "child_process";
+import * as actions from "@actions/core";
 import TestUtils from "./test/util";
 import run from "./index";
-import * as actions from "@actions/core";
 
 describe("src/index", () => {
     let tmpDir: string;
 
-    const consoleInfo = jest.spyOn(console, "info");
+    const actionsInfo = jest.spyOn(actions, "info");
     const setFailed = jest.spyOn(actions, "setFailed");
 
     const {
@@ -39,7 +39,7 @@ describe("src/index", () => {
         delete process.env.INPUT_HEAD_REF;
         delete process.env.INPUT_EXTRA_CONFIG;
 
-        expect(consoleInfo).toHaveBeenCalled();
+        expect(actionsInfo).toHaveBeenCalled();
     });
 
     it("Successfully validates a target commit", async () => {

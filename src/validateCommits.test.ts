@@ -1,4 +1,5 @@
 import { execSync } from "child_process";
+import * as actions from "@actions/core";
 import TestUtils from "./test/util";
 import validateCommits from "./validateCommits";
 import preinstall from "./preinstall";
@@ -6,7 +7,7 @@ import * as commitlintExec from "./commitlint";
 
 describe("src/validateCommits", () => {
     const commitlint = jest.spyOn(commitlintExec, 'default');
-    const consoleInfo = jest.spyOn(console, "info");
+    const actionsInfo = jest.spyOn(actions, "info");
 
     const {
         createTempDirectory,
@@ -32,7 +33,7 @@ describe("src/validateCommits", () => {
 
     afterEach(() => {
         teardownGitRepo();
-        expect(consoleInfo).toHaveBeenCalled();
+        expect(actionsInfo).toHaveBeenCalled();
     });
 
     afterAll(() => {
