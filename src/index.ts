@@ -7,6 +7,7 @@ export default async () => {
     const {
         INPUT_BASE_REF: source,
         INPUT_HEAD_REF: destination,
+        INPUT_REF: ref,
         INPUT_TARGET_REF: target,
         INPUT_EXTRA_CONFIG: extraConfig,
     } = process.env;
@@ -17,24 +18,25 @@ export default async () => {
         console.log(source);
         console.log(destination);
 
-        if (source) {
-            execSync(`git checkout ${source}`);
-        }
+        // if (source) {
+        //     execSync(`git checkout ${source}`);
+        // }
 
-        console.log("Checked out source");
-        console.log(execSync('git branch --list').toString().trim());
+        // console.log("Checked out source");
+        // console.log(execSync('git branch --list').toString().trim());
 
-        if (destination) {
-            execSync(`git checkout ${destination}`);
-        }
+        // if (destination) {
+        //     execSync(`git checkout ${destination}`);
+        // }
 
         console.log("Checked out dest");
 
-        await validateCommits({
-            source,
-            destination,
-            target,
-        });
+        await validateCommits(
+            { target: ref || '' },
+            // source,
+            // destination,
+            // target,
+        );
     } catch (e) {
         console.log("Failed...");
         console.log(e);

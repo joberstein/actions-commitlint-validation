@@ -1,6 +1,7 @@
 interface CommitRange {
     source?: string;
     destination?: string;
+    target?: string;
 }
 
 interface CommitlintArgs {
