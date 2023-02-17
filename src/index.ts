@@ -22,6 +22,7 @@ export default async () => {
         }
 
         console.log("Checked out source");
+        console.log(execSync('git branch --list').toString().trim());
 
         if (destination) {
             execSync(`git checkout ${destination}`);
