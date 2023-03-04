@@ -1,5 +1,6 @@
 import { ExecSyncOptions, execSync } from 'child_process';
 import commitlint from './commitlint';
+import { setFailed } from '@actions/core';
 
 /**
  * Validate all the commits between two refs if possible. If not, validate a target
@@ -28,7 +29,9 @@ const getCommitFromRange = (
         try {
             const command = `git rev-list ${source}..${destination} | tail -n 1`;
             return execSync(command, options).toString().trim();
-        } catch {}
+        } catch {
+            setFailed('Failed to get initial commit in the given range.');
+        }
     }
 
     return '';
