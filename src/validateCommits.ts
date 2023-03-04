@@ -6,12 +6,10 @@ import commitlint from './commitlint';
  * commit instead. If the target commit is also absent, validate all commits.
  */
 export default async (
-    { target }: CommitRange,
-    // { target, source, destination }: BuildCommitlintArgs, 
+    { target, source, destination }: BuildCommitlintArgs, 
     options?: ExecSyncOptions
 ) => {
-    // const fromCommit = getCommitFromRange({ source, destination }, options) || target;
-    const fromCommit = getFromCommit({ target }, options);
+    const fromCommit = getCommitFromRange({ source, destination }, options) || target;
     
     await commitlint({ 
         from: fromCommit ? `${fromCommit}^` : undefined, 
@@ -22,17 +20,16 @@ export default async (
 /**
  * Get the initial commit from two refs, or an empty string if no commit found.
  */
-const getFromCommit = (
-    { target }: CommitRange,
+const getCommitFromRange = (
+    { source, destination }: CommitRange, 
     options?: ExecSyncOptions
 ): string => {
-    // if (source && destination) {
-        // try {
-            // const command = `git rev-list ${source}..${destination} | tail -n 1`;
-            const command = `git rev-list ${target} | tail -n 1`;
+    if (source && destination) {
+        try {
+            const command = `git rev-list ${source}..${destination} | tail -n 1`;
             return execSync(command, options).toString().trim();
-        // } catch {}
-    // }
+        } catch {}
+    }
 
-    // return '';
+    return '';
 }

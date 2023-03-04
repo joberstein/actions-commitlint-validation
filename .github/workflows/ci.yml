@@ -37,7 +37,6 @@ jobs:
           base_ref: ${{ github.base_ref }}
           head_ref: ${{ github.head_ref }}
           target_ref: ${{ github.sha }}
-          ref: ${{ github.ref }}
           extra_config: "@joberstein12/commitlint-config"
 
       - name: Set default git branch
