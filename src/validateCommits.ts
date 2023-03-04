@@ -11,6 +11,7 @@ export default async (
     options?: ExecSyncOptions
 ) => {
     const fromCommit = getCommitFromRange({ source, destination }, options) || target;
+    console.log(fromCommit);
     
     await commitlint({ 
         from: fromCommit ? `${fromCommit}^` : undefined, 
@@ -28,11 +29,15 @@ const getCommitFromRange = (
     if (source && destination) {
         try {
             const command = `git rev-list ${source}..${destination} | tail -n 1`;
+            console.log(command);
             return execSync(command, options).toString().trim();
         } catch {
+            console.log("Failed getting initial commit");
             setFailed('Failed to get initial commit in the given range.');
         }
     }
+
+    console.log("commit range passthrough");
 
     return '';
 }
