@@ -30,9 +30,10 @@ const getCommitFromRange = (
         try {
             const command = `git rev-list ${source}..${destination} | tail -n 1`;
             console.log(command);
-            const result = execSync(command, options).toString().trim();
-            console.log(`Result: ${result}`);
-            return result;
+            const result = execSync(command, options);
+            const output = result.toString().trim();
+            console.log(`Result: --- ${output} ---`);
+            return output;
         } catch {
             console.log("Failed getting initial commit");
             setFailed('Failed to get initial commit in the given range.');
