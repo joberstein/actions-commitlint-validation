@@ -21,3 +21,20 @@ repos:
             - commit-msg
           additional_dependencies:
             - '@joberstein12/commitlint-config'
+  - repo: local
+    hooks:
+      - id: tsc
+        name: Compile Typescript
+        entry: 'npm run build'
+        language: node
+        stages: [ commit ]
+        types: [ ts ]
+        pass_filenames: false
+  - repo: local
+    hooks:
+      - id: add-dist
+        name: Add dist folder
+        entry: 'git add dist'
+        language: system
+        stages: [ commit ]
+        always_run: true

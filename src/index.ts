@@ -12,7 +12,7 @@ export default async () => {
     } = process.env;
     
     try {
-        preinstall(extraConfig);
+        preinstall(extraConfig); 
 
         if (source) {
             execSync(`git checkout '${source}'`);
