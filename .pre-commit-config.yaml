@@ -25,7 +25,16 @@ repos:
     hooks:
       - id: tsc
         name: Compile Typescript
-        entry: 'npm run tsc'
+        entry: 'npm run build'
         language: node
-        types_or: [ts, tsx]
-        stages: [commit]
+        stages: [ commit ]
+        types: [ ts ]
+        pass_filenames: false
+  - repo: local
+    hooks:
+      - id: add-dist
+        name: Add dist folder
+        entry: 'git add dist'
+        language: system
+        stages: [ commit ]
+        always_run: true
