@@ -21,3 +21,11 @@ repos:
             - commit-msg
           additional_dependencies:
             - '@joberstein12/commitlint-config'
+  - repo: local
+    hooks:
+      - id: tsc
+        name: Compile Typescript
+        entry: 'npm run tsc'
+        language: node
+        types_or: [ts, tsx]
+        stages: [commit]
