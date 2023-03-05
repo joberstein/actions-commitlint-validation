@@ -1,6 +1,9 @@
-name: Validate Commits
+name: Validate Commits with Commitlint
 description: Validate commits with commitlint using Github Actions.
 author: Jesse Oberstein
+branding:
+  icon: git-commit
+  color: green
 runs:
   using: 'node16'
   main: 'dist/action.js'
