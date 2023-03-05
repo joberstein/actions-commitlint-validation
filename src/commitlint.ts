@@ -2,7 +2,7 @@ import load from "@commitlint/load";
 import read from "@commitlint/read";
 import lint from "@commitlint/lint";
 import format from "@commitlint/format";
-import { info, warning, error } from "@actions/core";
+import {info, warning, error} from "@actions/core";
 
 /**
  * Run commitlint and print the formatted results. 
