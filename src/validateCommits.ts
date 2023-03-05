@@ -10,8 +10,9 @@ export default async (
     { target, source, destination }: BuildCommitlintArgs, 
     options?: ExecSyncOptions
 ) => {
-    const fromCommit = getCommitFromRange({ source, destination }, options) || target;
-    console.log(fromCommit);
+    const fromCommit = source && destination
+        ? getCommitFromRange({ source, destination }, options) 
+        : target;
     
     await commitlint({ 
         from: fromCommit ? `${fromCommit}^` : undefined, 
@@ -20,27 +21,20 @@ export default async (
 }
 
 /**
- * Get the initial commit from two refs, or an empty string if no commit found.
+ * Get the initial commit from two refs.
+ * @throws if there was an error getting the commit.
  */
 const getCommitFromRange = (
     { source, destination }: CommitRange, 
     options?: ExecSyncOptions
 ): string => {
-    if (source && destination) {
-        try {
-            const command = `git rev-list ${source}..${destination} | tail -n 1`;
-            console.log(command);
-            const result = execSync(command, options);
-            const output = result.toString().trim();
-            console.log(`Result: --- ${output} ---`);
-            return output;
-        } catch {
-            console.log("Failed getting initial commit");
-            setFailed('Failed to get initial commit in the given range.');
-        }
+    const result = execSync(`git rev-list ${source}..${destination} | tail -n 1`, options)
+        .toString()
+        .trim();
+
+    if (!result) {
+        throw new Error('Failed to get initial commit in the given range.');
     }
 
-    console.log("commit range passthrough");
-
-    return '';
+    return result;
 }

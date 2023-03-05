@@ -33,7 +33,6 @@ describe("src/validateCommits", () => {
 
     afterEach(() => {
         teardownGitRepo();
-        expect(actionsInfo).toHaveBeenCalled();
     });
 
     afterAll(() => {
@@ -42,6 +41,7 @@ describe("src/validateCommits", () => {
     
     it("Validates all commits with empty args", async () => {
         await expect(validateCommits({}, options)).resolves.not.toThrow();
+        expect(actionsInfo).toHaveBeenCalled();
         expect(commitlint).toHaveBeenCalledWith(
             expect.objectContaining({ from: undefined })
         );
@@ -53,6 +53,7 @@ describe("src/validateCommits", () => {
             const args = { target };
 
             await expect(validateCommits(args, options)).resolves.not.toThrow();
+            expect(actionsInfo).toHaveBeenCalled();
             expect(commitlint).toHaveBeenCalledWith(
                 expect.objectContaining({ from: `${target}^` })
             );
@@ -65,6 +66,7 @@ describe("src/validateCommits", () => {
             const args = { target };
 
             await expect(validateCommits(args, options)).rejects.toThrow();
+            expect(actionsInfo).toHaveBeenCalled();
             expect(commitlint).toHaveBeenCalledWith(
                 expect.objectContaining({ from: `${target}^` })
             );
@@ -86,6 +88,7 @@ describe("src/validateCommits", () => {
             };
     
             await expect(validateCommits(args, options)).resolves.not.toThrow();
+            expect(actionsInfo).toHaveBeenCalled();
             expect(commitlint).toHaveBeenCalledWith(
                 expect.objectContaining({ from: `${target}^` })
             );
@@ -103,6 +106,7 @@ describe("src/validateCommits", () => {
             };
     
             await expect(validateCommits(args, options)).rejects.toThrow();
+            expect(actionsInfo).toHaveBeenCalled();
             expect(commitlint).toHaveBeenCalledWith(
                 expect.objectContaining({ from: `${target}^` })
             );
@@ -115,11 +119,10 @@ describe("src/validateCommits", () => {
                 destination: "master",
                 target,
             };
-
-            await expect(validateCommits(args, options)).resolves.not.toThrow();
-            expect(commitlint).toHaveBeenCalledWith(
-                expect.objectContaining({ from: `${target}^` })
-            );
+            
+            await expect(validateCommits(args, options)).rejects.toThrow();
+            expect(actionsInfo).not.toHaveBeenCalled();
+            expect(commitlint).not.toHaveBeenCalled();
         });
     
         it("Validates the target commit when the destination is not known", async () => {
@@ -127,13 +130,12 @@ describe("src/validateCommits", () => {
             const args = {
                 source: "other",
                 destination: "error",
-                target,
+                target, 
             };
 
-            await expect(validateCommits(args, options)).resolves.not.toThrow();
-            expect(commitlint).toHaveBeenCalledWith(
-                expect.objectContaining({ from: `${target}^` })
-            );
+            await expect(validateCommits(args, options)).rejects.toThrow();
+            expect(actionsInfo).not.toHaveBeenCalled();
+            expect(commitlint).not.toHaveBeenCalled();
         });
 
         it("Successfully validates merge commits", async () => {
@@ -146,6 +148,7 @@ describe("src/validateCommits", () => {
             const args = { target };
 
             await expect(validateCommits(args, options)).resolves.not.toThrow();
+            expect(actionsInfo).toHaveBeenCalled();
             expect(commitlint).toHaveBeenCalledWith(
                 expect.objectContaining({ from: `${target}^` })
             );
