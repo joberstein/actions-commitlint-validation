@@ -49,9 +49,9 @@ describe("src/index", () => {
 
     it("Successfully validates a range of commits", async () => {
         process.env.INPUT_BASE_REF = "master";
-        process.env.INPUT_HEAD_REF = "other";
+        process.env.INPUT_HEAD_REF = "#3";
 
-        execSync("git checkout -qb other", options);
+        execSync(`git checkout -qb '${process.env.INPUT_HEAD_REF}'`, options);
         [ ...Array(3).keys() ].forEach(addValidCommit);
         process.env.INPUT_TARGET_REF = getNthCommitBack(1);
 

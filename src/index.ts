@@ -13,22 +13,14 @@ export default async () => {
     
     try {
         preinstall(extraConfig);
-        
-        console.log(source);
-        console.log(destination);
 
         if (source) {
-            execSync(`git checkout ${source}`);
+            execSync(`git checkout '${source}'`);
         }
-
-        console.log("Checked out source");
-        console.log(execSync('git branch --list').toString().trim());
 
         if (destination) {
-            execSync(`git checkout ${destination}`);
+            execSync(`git checkout '${destination}'`);
         }
-
-        console.log("Checked out dest");
 
         await validateCommits({
             source,
@@ -36,8 +28,6 @@ export default async () => {
             target,
         });
     } catch (e) {
-        console.log("Failed...");
-        console.log(e);
         setFailed((e as Error).message);
     }
 }
