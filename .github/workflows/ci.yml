@@ -34,9 +34,6 @@ jobs:
       - name: Validate Commits
         uses: ./
         with:
-          base_ref: ${{ github.base_ref }}
-          head_ref: ${{ github.head_ref }}
-          target_ref: ${{ github.sha }}
           extra_config: "@joberstein12/commitlint-config"
 
       - name: Set default git branch
