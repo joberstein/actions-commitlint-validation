@@ -36,7 +36,7 @@ jobs:
         with:
           extra_config: "@joberstein12/commitlint-config"
 
-      - name: Set default git branch
+      - name: Set Default Git Branch
         run: |
           git config --global init.defaultBranch master
           git config --global user.name "CI Pipeline"
@@ -44,6 +44,9 @@ jobs:
 
       - name: Execute Tests
         run: npm test -- --ci
+
+      - name: Commit Build Files
+        run: "git commit -am 'chore: Commit dist and node_modules.'"
 
       - name: Deploy Application
         uses: cycjimmy/semantic-release-action@v3
