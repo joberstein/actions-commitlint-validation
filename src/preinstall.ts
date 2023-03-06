@@ -1,4 +1,5 @@
 import { ExecSyncOptions, execSync } from 'child_process';
+import { existsSync } from 'fs';
 
 /**
  * Pre-install extra dependencies.
@@ -15,6 +16,10 @@ export default (packageString?: string, options?: ExecSyncOptions): void => {
     .join(' ');
 
   if (packages) {
-    execSync(`npm install ${packages} --silent`, options);
+    const command = existsSync('yarn.lock')
+      ? `yarn add ${packages} --silent`
+      : `npm install ${packages} --silent`;
+
+    execSync(command, options);
   }
 };

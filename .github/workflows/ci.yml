@@ -46,6 +46,7 @@ jobs:
         run: npm test -- --ci
 
       - name: Push Build Files
+        if: github.event == 'push'
         run: |
           git add dist node_modules
           git diff --staged --quiet || (git commit -m "chore: Commit dist and node_modules." && git push)
