@@ -47,7 +47,8 @@ jobs:
 
       - name: Push Build Files
         run: |
-          git commit -amv "chore: Commit dist and node_modules."
+          git status
+          git commit -am "chore: Commit dist and node_modules." --verbose
 
       - name: Deploy Application
         uses: cycjimmy/semantic-release-action@v3
