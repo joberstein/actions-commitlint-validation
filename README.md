@@ -2,6 +2,10 @@
 
 This Github action uses commitlint to validate commits on different events for a repository. A caller can extend the base validation configuration by providing custom commitlint config.
 
+## Continuous Integration
+
+The Github Workflow for this repo automatically commits up-to-date dist and node_modules based on the committed source code (src and package-lock.json).
+
 # Scenarios
 
 Validate commits for events like:
@@ -15,7 +19,7 @@ Validate commits for events like:
 
 ```yaml
 - name: Validate Commits
-  uses: joberstein/actions-commitlint-validation@v1
+  uses: joberstein/actions-commitlint-validation@v1.0.0
   with:
     extra_config: @joberstein12/commitlint-config
 ```
