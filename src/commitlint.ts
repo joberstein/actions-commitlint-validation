@@ -28,9 +28,9 @@ export default async (args: GetCommitMessageOptions) => {
     const warnings = [];
     const errors = [];
 
-    results.forEach(result => {
-        warnings.push(...(result.warnings || []));
-        errors.push(...(result.errors || []));
+    results.forEach(({ warnings, errors }) => {
+        warnings.push(...warnings);
+        errors.push(...errors);
     });
 
     if (!!warnings.length) {
