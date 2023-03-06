@@ -45,8 +45,9 @@ jobs:
       - name: Execute Tests
         run: npm test -- --ci
 
-      - name: Commit Build Files
-        run: "git commit -am 'chore: Commit dist and node_modules.'"
+      - name: Push Build Files
+        run: |
+          git commit -amv "chore: Commit dist and node_modules."
 
       - name: Deploy Application
         uses: cycjimmy/semantic-release-action@v3
