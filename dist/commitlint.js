@@ -36,9 +36,9 @@ exports.default = (args) => __awaiter(void 0, void 0, void 0, function* () {
     (0, core_1.info)(formatted);
     const warnings = [];
     const errors = [];
-    results.forEach(result => {
-        warnings.push(...(result.warnings || []));
-        errors.push(...(result.errors || []));
+    results.forEach(({ warnings, errors }) => {
+        warnings.push(...warnings);
+        errors.push(...errors);
     });
     if (!!warnings.length) {
         (0, core_1.warning)(`${warnings.length} warning(s) found.`);

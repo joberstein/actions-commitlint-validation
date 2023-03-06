@@ -10,7 +10,7 @@ import {info, warning, error} from "@actions/core";
  * @throws If any of the commits are invalid.
  */
 export default async (args: GetCommitMessageOptions) => {
-    const [ config, commits ] = await Promise.all([ 
+    const [ config, commits ] = await Promise.all([
         load(undefined, args),
         read(args),
     ]);
@@ -28,9 +28,9 @@ export default async (args: GetCommitMessageOptions) => {
     const warnings = [];
     const errors = [];
 
-    results.forEach(result => {
-        warnings.push(...(result.warnings || []));
-        errors.push(...(result.errors || []));
+    results.forEach(({ warnings, errors }) => {
+        warnings.push(...warnings);
+        errors.push(...errors);
     });
 
     if (!!warnings.length) {
