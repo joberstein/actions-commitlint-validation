@@ -22,7 +22,7 @@ inputs:
 
   ref_name:
     description: The name of the ref (branch or tag) of the event that triggered this workflow (required for pushes).
-    default: ${{ github.ref }}
+    default: ${{ github.ref_name }}
 
   ref_type:
     description: The ref type of the event that triggered this workflow (required for pushes). Only branch refs are validated.
