@@ -32,7 +32,7 @@ class GitEvent {
     performCheckouts(): void {
         this.getRefsToCheckout()
             .filter(ref => ref)
-            .forEach(ref => execSync(`git checkout ${ref}`, this.options).toString());
+            .forEach(ref => execSync(`git checkout '${ref}'`, this.options).toString());
     }
 
     /**

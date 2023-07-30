@@ -50,7 +50,7 @@ export default class Push extends GitEvent {
             .filter(seenRef => ref !== seenRef)
             .join(' ');
         
-        const [commit, ] = execSync(`git rev-list --no-merges --not ${refsToExclude} '${ref}'`, options)
+        const [commit, ] = execSync(`git rev-list --no-merges --not '${refsToExclude}' '${ref}'`, options)
             .toString()
             .trim()
             .split('\n')

@@ -58,7 +58,7 @@ class Push extends gitEvent_1.default {
             .split('\n')
             .filter(seenRef => ref !== seenRef)
             .join(' ');
-        const [commit,] = (0, child_process_1.execSync)(`git rev-list --no-merges --not ${refsToExclude} '${ref}'`, options)
+        const [commit,] = (0, child_process_1.execSync)(`git rev-list --no-merges --not '${refsToExclude}' '${ref}'`, options)
             .toString()
             .trim()
             .split('\n')

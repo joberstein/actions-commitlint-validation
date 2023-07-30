@@ -52,7 +52,7 @@ class GitEvent {
     performCheckouts() {
         this.getRefsToCheckout()
             .filter(ref => ref)
-            .forEach(ref => (0, child_process_1.execSync)(`git checkout ${ref}`, this.options).toString());
+            .forEach(ref => (0, child_process_1.execSync)(`git checkout '${ref}'`, this.options).toString());
     }
     /**
      * Provide a list of commits for commitlint to start validation from.
