@@ -1,32 +1,30 @@
-import { execSync } from 'child_process';
-import validateCommits from './validateCommits';
-import preinstall from './preinstall';
 import { setFailed } from '@actions/core';
+import GitEvent from './events/gitEvent';
+import PullRequest from './events/pullRequest';
+import Push from './events/push';
+import preinstall from './preinstall';
+import { execSync } from 'child_process';
 
 export default async () => {
     const {
-        INPUT_BASE_REF: source,
-        INPUT_HEAD_REF: destination,
-        INPUT_TARGET_REF: target,
+        INPUT_BASE_REF: base_ref,
+        INPUT_HEAD_REF: head_ref,
+        INPUT_REF: ref,
+        INPUT_REF_TYPE: ref_type,
+        INPUT_TARGET_REF: target = '',
         INPUT_EXTRA_CONFIG: extraConfig,
     } = process.env;
+
+    const event = base_ref && head_ref
+        ? new PullRequest({ base_ref, head_ref, target })
+        : ref
+            ? new Push({ ref, ref_type, target })
+            : new GitEvent({ target });
     
     try {
-        preinstall(extraConfig); 
-
-        if (source) {
-            execSync(`git checkout '${source}'`);
-        }
-
-        if (destination) {
-            execSync(`git checkout '${destination}'`);
-        }
-
-        await validateCommits({
-            source,
-            destination,
-            target,
-        });
+        event.performCheckouts();
+        preinstall(extraConfig);
+        await event.validateCommits();
     } catch (e) {
         setFailed((e as Error).message);
     }

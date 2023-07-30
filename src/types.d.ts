@@ -1,19 +1,15 @@
-interface CommitRange {
-    source?: string;
-    destination?: string;
+interface PushEventArgs extends GitEventArgs {
+    ref: string;
+    ref_type?: string;
 }
 
-interface CommitlintArgs {
-    config?: string;
-    verbose?: boolean;
-    from?: string;
+interface PullRequestEventArgs extends GitEventArgs {
+    base_ref: string;
+    head_ref: string;
 }
 
-interface BuildCommitlintArgs {
-    config?: string;
-    source?: string;
-    destination?: string;
-    target?: string;
+interface GitEventArgs {
+    target: string;
 }
 
 // Copied from '@commitlint/read'

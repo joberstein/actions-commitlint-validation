@@ -1,4 +1,5 @@
 {
     "clearMocks": true,
-    "testPathIgnorePatterns": [ "/dist/", "/node_modules/" ]
+    "testPathIgnorePatterns": [ "/dist/", "/node_modules/" ],
+    "modulePaths": ["<rootDir>/src/"]
 }

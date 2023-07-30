@@ -15,8 +15,9 @@ export default class TestUtils {
 
     addValidCommit = () => {
         const commands = [
-            "echo invalid >> src/test.txt",
-            "git add src",
+            "echo valid >> src/test.txt",
+            "echo '   ' >> package.json",
+            "git add --all",
             `git commit -m "chore(ci): Add valid commit."`,
         ];
     
@@ -37,8 +38,12 @@ export default class TestUtils {
         execSync("mktemp -d", { encoding: this.encoding }).trim();
 
     setupTestDirectory = (tmpDir: string) => {
-        execSync(`cp ${process.cwd()}/.commitlintrc.json ${tmpDir}`);
-        execSync(`cp ${process.cwd()}/package*.json ${tmpDir}`);
+        execSync([
+            `cp ${process.cwd()}/.commitlintrc.json ${tmpDir}`,
+            `cp ${process.cwd()}/package*.json ${tmpDir}`,
+            `cp ${process.cwd()}/.gitignore ${tmpDir}`,
+        ].join(' && '));
+        
         process.chdir(tmpDir);
         execSync('npm install --frozen-lockfile', this.options);
     };
@@ -46,9 +51,12 @@ export default class TestUtils {
     intializeGitRepo = () => {
         execSync([
             "git init",
+            "git config advice.detachedHead false",
             "rm -rf .git/hooks",
             "mkdir src",
             "touch src/test.txt",
+            "git add --all",
+            "git commit -m 'chore: Add initial commit.'",
         ].join(" && "), this.options);
     
         [ ...Array(2).keys() ].forEach(this.addValidCommit);
@@ -56,8 +64,8 @@ export default class TestUtils {
 
     teardownGitRepo = () => {
         execSync([
-            "rm -rf .git",
-            "rm -rf src"
+            "rm -rf .git/*",
+            "rm -rf src",
         ].join(' && '), this.options);
     }
 
