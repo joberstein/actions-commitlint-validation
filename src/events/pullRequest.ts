@@ -30,7 +30,7 @@ export default class PullRequest extends GitEvent {
         const { head_ref, base_ref } = this.#args;
         const { options, target } = this;
 
-        const [commit, ] = execSync(`git rev-list --no-merges --first-parent ${base_ref}..'${head_ref}'`, options)
+        const [commit, ] = execSync(`git rev-list --no-merges --first-parent refs/heads/${base_ref}..refs/heads/${head_ref}`, options)
             .toString()
             .trim()
             .split('\n')

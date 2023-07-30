@@ -42,7 +42,7 @@ class PullRequest extends gitEvent_1.default {
     getFromCommits() {
         const { head_ref, base_ref } = __classPrivateFieldGet(this, _PullRequest_args, "f");
         const { options, target } = this;
-        const [commit,] = (0, child_process_1.execSync)(`git rev-list --no-merges --first-parent ${base_ref}..'${head_ref}'`, options)
+        const [commit,] = (0, child_process_1.execSync)(`git rev-list --no-merges --first-parent refs/heads/${base_ref}..refs/heads/${head_ref}`, options)
             .toString()
             .trim()
             .split('\n')

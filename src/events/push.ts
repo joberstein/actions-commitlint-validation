@@ -20,7 +20,7 @@ export default class Push extends GitEvent {
      getRefsToCheckout(): string[] {
         const { ref_type, ref } = this.#args;
         
-        return ref_type === 'branch' ? [this.#args.ref] : [];
+        return ref_type === 'branch' ? [ref] : [];
     }
 
     /**
@@ -50,7 +50,7 @@ export default class Push extends GitEvent {
             .filter(seenRef => ref !== seenRef)
             .join(' ');
         
-        const [commit, ] = execSync(`git rev-list --no-merges '${ref}' --not ${refsToExclude}`, options)
+        const [commit, ] = execSync(`git rev-list --no-merges --not ${refsToExclude} '${ref}'`, options)
             .toString()
             .trim()
             .split('\n')

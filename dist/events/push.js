@@ -33,7 +33,7 @@ class Push extends gitEvent_1.default {
     */
     getRefsToCheckout() {
         const { ref_type, ref } = __classPrivateFieldGet(this, _Push_args, "f");
-        return ref_type === 'branch' ? [__classPrivateFieldGet(this, _Push_args, "f").ref] : [];
+        return ref_type === 'branch' ? [ref] : [];
     }
     /**
      * Skip validation for tag and non-branch pushes.
@@ -58,7 +58,7 @@ class Push extends gitEvent_1.default {
             .split('\n')
             .filter(seenRef => ref !== seenRef)
             .join(' ');
-        const [commit,] = (0, child_process_1.execSync)(`git rev-list --no-merges '${ref}' --not ${refsToExclude}`, options)
+        const [commit,] = (0, child_process_1.execSync)(`git rev-list --no-merges --not ${refsToExclude} '${ref}'`, options)
             .toString()
             .trim()
             .split('\n')
