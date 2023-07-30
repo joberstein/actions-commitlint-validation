@@ -53,21 +53,19 @@ class Push extends gitEvent_1.default {
         const { ref_name } = __classPrivateFieldGet(this, _Push_args, "f");
         const { options } = this;
         const currentBranchIndicator = '* ';
-        const isBranchSpecificRevision = (refName, revision) => {
-            const branchesWithRevision = (0, child_process_1.execSync)(`git branch -a --contains '${revision}'`, options)
-                .toString()
-                .trim()
-                .split('\n')
-                .map(branch => branch.startsWith(currentBranchIndicator)
-                ? branch.replace(currentBranchIndicator, '')
-                : branch)
-                .every(branch => new RegExp(`^(remotes\/origin\/)?${refName}$`).test(branch.trim()));
-        };
+        const isBranchSpecificRevision = (revision) => (0, child_process_1.execSync)(`git branch -a --contains '${revision}'`, options)
+            .toString()
+            .trim()
+            .split('\n')
+            .map(branch => branch.startsWith(currentBranchIndicator)
+            ? branch.replace(currentBranchIndicator, '')
+            : branch)
+            .every(branch => new RegExp(`^(remotes\/origin\/)?${ref_name}$`).test(branch.trim()));
         const [commit,] = (0, child_process_1.execSync)(`git rev-list '${ref_name}'`, options)
             .toString()
             .trim()
             .split('\n')
-            .filter(revision => isBranchSpecificRevision(ref_name, revision))
+            .filter(isBranchSpecificRevision)
             .reverse();
         return [commit].filter(c => c);
     }

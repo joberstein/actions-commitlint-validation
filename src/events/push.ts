@@ -44,8 +44,8 @@ export default class Push extends GitEvent {
         const { options } = this;
         const currentBranchIndicator = '* ';
 
-        const isBranchSpecificRevision = (refName: string, revision: string) => {
-            const branchesWithRevision = execSync(`git branch -a --contains '${revision}'`, options)
+        const isBranchSpecificRevision = (revision: string) =>
+            execSync(`git branch -a --contains '${revision}'`, options)
                 .toString()
                 .trim()
                 .split('\n')
@@ -53,14 +53,13 @@ export default class Push extends GitEvent {
                     ? branch.replace(currentBranchIndicator, '')
                     : branch
                 )
-                .every(branch => new RegExp(`^(remotes\/origin\/)?${refName}$`).test(branch.trim()));
-        }
+                .every(branch => new RegExp(`^(remotes\/origin\/)?${ref_name}$`).test(branch.trim()));
         
         const [commit, ] = execSync(`git rev-list '${ref_name}'`, options)
             .toString()
             .trim()
             .split('\n')
-            .filter(revision => isBranchSpecificRevision(ref_name, revision))
+            .filter(isBranchSpecificRevision)
             .reverse();
 
         return [commit].filter(c => c);
