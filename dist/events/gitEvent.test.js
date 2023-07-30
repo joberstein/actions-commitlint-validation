@@ -43,7 +43,6 @@ const commitlintExec = __importStar(require("../commitlint"));
 const gitEvent_1 = __importDefault(require("./gitEvent"));
 describe("src/events/gitEvent", () => {
     const commitlint = jest.spyOn(commitlintExec, 'default');
-    const actionsInfo = jest.spyOn(actions, "info");
     const { createTempDirectory, intializeGitRepo, getNthCommitBack, teardownGitRepo, teardownTestDirectory, addInvalidCommit, addValidCommit, setupTestDirectory, options, } = new util_1.default();
     beforeAll(() => {
         options.cwd = createTempDirectory();
@@ -55,8 +54,8 @@ describe("src/events/gitEvent", () => {
     });
     afterEach(() => {
         teardownGitRepo();
-        expect(actionsInfo).toHaveBeenCalled();
-        expect(actionsInfo).not.toHaveBeenCalledWith(expect.stringContaining('Skipping commit validation'));
+        expect(actions.info).toHaveBeenCalled();
+        expect(actions.info).not.toHaveBeenCalledWith(expect.stringContaining('Skipping commit validation'));
         expect(commitlint).toHaveBeenCalledTimes(1);
     });
     afterAll(() => {

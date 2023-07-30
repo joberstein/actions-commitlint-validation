@@ -43,8 +43,6 @@ const index_1 = __importDefault(require("./index"));
 jest.setTimeout(20000);
 describe("src/index", () => {
     let tmpDir;
-    const actionsInfo = jest.spyOn(actions, "info");
-    const setFailed = jest.spyOn(actions, "setFailed");
     const commitlint = jest.spyOn(commitlintExec, 'default');
     const { createTempDirectory, intializeGitRepo, getNthCommitBack, teardownGitRepo, teardownTestDirectory, addInvalidCommit, addValidCommit, setupTestDirectory, options, } = new util_1.default();
     beforeEach(() => {
@@ -61,13 +59,13 @@ describe("src/index", () => {
         delete process.env.INPUT_BASE_REF;
         delete process.env.INPUT_HEAD_REF;
         delete process.env.INPUT_EXTRA_CONFIG;
-        delete process.env.INPUT_REF;
+        delete process.env.INPUT_REF_NAME;
         delete process.env.INPUT_REF_TYPE;
-        expect(actionsInfo).toHaveBeenCalled();
+        expect(actions.info).toHaveBeenCalled();
     });
     it("Successfully validates a target commit", () => __awaiter(void 0, void 0, void 0, function* () {
         yield (0, index_1.default)();
-        expect(setFailed).not.toHaveBeenCalled();
+        expect(actions.setFailed).not.toHaveBeenCalled();
         expect(commitlint).toHaveBeenCalledTimes(1);
         expect(commitlint).toHaveBeenCalledWith({ from: `${process.env.INPUT_TARGET_REF}^` });
     }));
@@ -76,10 +74,10 @@ describe("src/index", () => {
         (0, child_process_1.execSync)(`git checkout -qb '${branch}'`, options);
         [...Array(3).keys()].forEach(addValidCommit);
         process.env.INPUT_TARGET_REF = getNthCommitBack(1);
-        process.env.INPUT_REF = `refs/heads/${branch}`;
+        process.env.INPUT_REF_NAME = branch;
         process.env.INPUT_REF_TYPE = 'branch';
         yield (0, index_1.default)();
-        expect(setFailed).not.toHaveBeenCalled();
+        expect(actions.setFailed).not.toHaveBeenCalled();
         expect(commitlint).toHaveBeenCalledTimes(1);
         expect(commitlint).toHaveBeenCalledWith({ from: `${getNthCommitBack(3)}^` });
     }));
@@ -90,7 +88,7 @@ describe("src/index", () => {
         [...Array(3).keys()].forEach(addValidCommit);
         process.env.INPUT_TARGET_REF = getNthCommitBack(1);
         yield (0, index_1.default)();
-        expect(setFailed).not.toHaveBeenCalled();
+        expect(actions.setFailed).not.toHaveBeenCalled();
         expect(commitlint).toHaveBeenCalledTimes(2);
         [getNthCommitBack(3), process.env.INPUT_TARGET_REF]
             .forEach(commit => expect(commitlint).toHaveBeenCalledWith({ from: `${commit}^` }));
@@ -105,17 +103,17 @@ describe("src/index", () => {
         addValidCommit();
         process.env.INPUT_TARGET_REF = getNthCommitBack(1);
         yield (0, index_1.default)();
-        expect(setFailed).not.toHaveBeenCalled();
+        expect(actions.setFailed).not.toHaveBeenCalled();
         expect(commitlint).toHaveBeenCalledTimes(2);
         [fromCommit, process.env.INPUT_TARGET_REF]
             .forEach(commit => expect(commitlint).toHaveBeenCalledWith({ from: `${commit}^` }));
     }));
     it("Skips commit validation for a tag push", () => __awaiter(void 0, void 0, void 0, function* () {
         process.env.INPUT_TARGET_REF = getNthCommitBack(1);
-        process.env.INPUT_REF = `refs/tags/someTag`;
+        process.env.INPUT_REF_NAME = 'someTag';
         process.env.INPUT_REF_TYPE = 'tag';
         yield (0, index_1.default)();
-        expect(setFailed).not.toHaveBeenCalled();
+        expect(actions.setFailed).not.toHaveBeenCalled();
         expect(commitlint).not.toHaveBeenCalled();
     }));
     it("Fails validation for an invalid commit", () => __awaiter(void 0, void 0, void 0, function* () {
@@ -123,7 +121,7 @@ describe("src/index", () => {
         process.env.INPUT_TARGET_REF = getNthCommitBack(1);
         yield (0, index_1.default)();
         expect(commitlint).toHaveBeenCalledTimes(1);
-        expect(setFailed).toHaveBeenCalledWith('Commit validation failed.');
+        expect(actions.setFailed).toHaveBeenCalledWith('Commit validation failed.');
     }));
 });
 //# sourceMappingURL=index.test.js.map

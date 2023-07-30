@@ -32,43 +32,44 @@ class Push extends gitEvent_1.default {
     * @returns A list of refs
     */
     getRefsToCheckout() {
-        const { ref_type, ref } = __classPrivateFieldGet(this, _Push_args, "f");
-        return ref_type === 'branch' ? [ref] : [];
+        const { ref_type, ref_name } = __classPrivateFieldGet(this, _Push_args, "f");
+        return ref_type === 'branch' ? [ref_name] : [];
     }
     /**
      * Skip validation for tag and non-branch pushes.
      * @returns A reason for skipping validation for non-branch pushes.
      */
     getSkipValidationReason() {
-        const { ref_type, ref } = __classPrivateFieldGet(this, _Push_args, "f");
+        const { ref_type, ref_name } = __classPrivateFieldGet(this, _Push_args, "f");
         if (ref_type !== 'branch') {
-            return `Pushes for ref type: '${ref_type}' are not supported, regarding: '${ref}'.`;
+            return `Pushes for ref type: '${ref_type}' are not supported, regarding: '${ref_name}'.`;
         }
     }
     /**
-     * Provide a list containing the initial commit on the ref that was pushed to.
+     * Provide a list containing the initial commit that is only on the ref that was pushed to.
      * @returns A list of commit hashes
      */
     getFromCommits() {
-        const { ref } = __classPrivateFieldGet(this, _Push_args, "f");
+        const { ref_name } = __classPrivateFieldGet(this, _Push_args, "f");
         const { options } = this;
-        const refs = (0, child_process_1.execSync)(`git for-each-ref --format="%(refname)" refs/heads`, options)
-            .toString()
-            .trim()
-            .split('\n');
-        console.log(refs);
-        const refsToExclude = refs
-            .filter(seenRef => ref !== seenRef)
-            .join(' ');
-        const [commit,] = (0, child_process_1.execSync)(`git rev-list --no-merges '${ref}' --not ${refsToExclude}`, options)
+        const currentBranchIndicator = '* ';
+        const isBranchSpecificRevision = (refName, revision) => {
+            const branchesWithRevision = (0, child_process_1.execSync)(`git branch --contains '${revision}'`, options)
+                .toString()
+                .trim()
+                .split('\n')
+                .map(branch => branch.startsWith(currentBranchIndicator)
+                ? branch.replace(currentBranchIndicator, '')
+                : branch);
+            return branchesWithRevision.length === 1 && branchesWithRevision.includes(refName);
+        };
+        const [commit,] = (0, child_process_1.execSync)(`git rev-list '${ref_name}'`, options)
             .toString()
             .trim()
             .split('\n')
+            .filter(revision => isBranchSpecificRevision(ref_name, revision))
             .reverse();
-        if (!commit) {
-            throw new Error(`Failed to get initial commit: '${ref}'.`);
-        }
-        return [commit];
+        return [commit].filter(c => c);
     }
 }
 exports.default = Push;

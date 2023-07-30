@@ -78,8 +78,11 @@ class GitEvent {
                 (0, core_1.info)(`Skipping commit validation: ${skipReason}`);
                 return;
             }
-            yield Promise.all(this.getFromCommits()
-                .map(from => {
+            const fromCommits = this.getFromCommits();
+            if (!fromCommits.length) {
+                (0, core_1.warning)('Could not find any commits to validate.');
+            }
+            yield Promise.all(fromCommits.map(from => {
                 var _a, _b;
                 return (0, commitlint_1.default)({
                     from: from ? `${from}^` : undefined,
