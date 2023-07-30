@@ -8,7 +8,7 @@ export default async () => {
     const {
         INPUT_BASE_REF: base_ref,
         INPUT_HEAD_REF: head_ref,
-        INPUT_REF: ref,
+        INPUT_REF_NAME: ref_name,
         INPUT_REF_TYPE: ref_type,
         INPUT_TARGET_REF: target = '',
         INPUT_EXTRA_CONFIG: extraConfig,
@@ -16,8 +16,8 @@ export default async () => {
 
     const event = base_ref && head_ref
         ? new PullRequest({ base_ref, head_ref, target })
-        : ref
-            ? new Push({ ref, ref_type, target })
+        : ref_name
+            ? new Push({ ref_name, ref_type, target })
             : new GitEvent({ target });
     
     try {

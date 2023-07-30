@@ -8,9 +8,7 @@ jest.setTimeout(20_000);
 
 describe("src/index", () => {
     let tmpDir: string;
-
-    const actionsInfo = jest.spyOn(actions, "info");
-    const setFailed = jest.spyOn(actions, "setFailed");
+    
     const commitlint = jest.spyOn(commitlintExec, 'default');
 
     const {
@@ -42,16 +40,16 @@ describe("src/index", () => {
         delete process.env.INPUT_BASE_REF;
         delete process.env.INPUT_HEAD_REF;
         delete process.env.INPUT_EXTRA_CONFIG;
-        delete process.env.INPUT_REF;
+        delete process.env.INPUT_REF_NAME;
         delete process.env.INPUT_REF_TYPE;
 
-        expect(actionsInfo).toHaveBeenCalled();
+        expect(actions.info).toHaveBeenCalled();
     });
 
     it("Successfully validates a target commit", async () => {
         await run();
 
-        expect(setFailed).not.toHaveBeenCalled();
+        expect(actions.setFailed).not.toHaveBeenCalled();
         expect(commitlint).toHaveBeenCalledTimes(1);
         expect(commitlint).toHaveBeenCalledWith({ from: `${process.env.INPUT_TARGET_REF}^` });
     });
@@ -63,12 +61,12 @@ describe("src/index", () => {
         [ ...Array(3).keys() ].forEach(addValidCommit);
 
         process.env.INPUT_TARGET_REF = getNthCommitBack(1);
-        process.env.INPUT_REF = `refs/heads/${branch}`;
+        process.env.INPUT_REF_NAME = branch;
         process.env.INPUT_REF_TYPE = 'branch';
 
         await run();
 
-        expect(setFailed).not.toHaveBeenCalled();
+        expect(actions.setFailed).not.toHaveBeenCalled();
         expect(commitlint).toHaveBeenCalledTimes(1);
         expect(commitlint).toHaveBeenCalledWith({ from: `${getNthCommitBack(3)}^` });
     });
@@ -83,7 +81,7 @@ describe("src/index", () => {
 
         await run();
 
-        expect(setFailed).not.toHaveBeenCalled();
+        expect(actions.setFailed).not.toHaveBeenCalled();
         expect(commitlint).toHaveBeenCalledTimes(2);
 
         [getNthCommitBack(3), process.env.INPUT_TARGET_REF]
@@ -107,7 +105,7 @@ describe("src/index", () => {
 
         await run();
         
-        expect(setFailed).not.toHaveBeenCalled();
+        expect(actions.setFailed).not.toHaveBeenCalled();
         expect(commitlint).toHaveBeenCalledTimes(2);
 
         [fromCommit, process.env.INPUT_TARGET_REF]
@@ -118,12 +116,12 @@ describe("src/index", () => {
 
     it("Skips commit validation for a tag push", async () => {
         process.env.INPUT_TARGET_REF = getNthCommitBack(1);
-        process.env.INPUT_REF = `refs/tags/someTag`;
+        process.env.INPUT_REF_NAME = 'someTag';
         process.env.INPUT_REF_TYPE = 'tag';
 
         await run();
 
-        expect(setFailed).not.toHaveBeenCalled();
+        expect(actions.setFailed).not.toHaveBeenCalled();
         expect(commitlint).not.toHaveBeenCalled();
     });
 
@@ -134,6 +132,6 @@ describe("src/index", () => {
         await run();
 
         expect(commitlint).toHaveBeenCalledTimes(1);
-        expect(setFailed).toHaveBeenCalledWith('Commit validation failed.');
+        expect(actions.setFailed).toHaveBeenCalledWith('Commit validation failed.');
     });
 });

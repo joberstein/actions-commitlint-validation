@@ -7,7 +7,6 @@ import Push from "./push";
 
 describe("src/events/push", () => {
     const commitlint = jest.spyOn(commitlintExec, 'default');
-    const actionsInfo = jest.spyOn(actions, "info");
 
     const {
         createTempDirectory,
@@ -44,8 +43,8 @@ describe("src/events/push", () => {
 
     describe("Validating push events to branches", () => {
         afterEach(() => {
-            expect(actionsInfo).toHaveBeenCalled();
-            expect(actionsInfo).not.toHaveBeenCalledWith(
+            expect(actions.info).toHaveBeenCalled();
+            expect(actions.info).not.toHaveBeenCalledWith(
                 expect.stringContaining('Skipping commit validation')
             );
             
@@ -54,7 +53,7 @@ describe("src/events/push", () => {
 
         it("Successfully validates commits on a branch", async () => {
             const event = new Push({
-                ref: 'refs/heads/other',
+                ref_name: 'other',
                 ref_type: 'branch',
                 target: getNthCommitBack(1),
             }, options);
@@ -66,16 +65,17 @@ describe("src/events/push", () => {
             );
         });
 
-        it("Successfully validates commits since a merge", async () => {
+        it("Successfully validates commits after branching from a merge", async () => {
             execSync([
                 'git checkout master',
-                'git merge --no-ff other'
+                'git merge --no-ff other',
+                'git checkout -qb other2',
             ].join(" && "), options);
 
             addValidCommit();
-    
+
             const event = new Push({
-                ref: 'refs/heads/master',
+                ref_name: 'other2',
                 ref_type: 'branch',
                 target: getNthCommitBack(1),
             }, options);
@@ -87,12 +87,33 @@ describe("src/events/push", () => {
             );
         });
 
+        it("Successfully validates commits for pushed branches with a merge commit", async () => {
+            execSync([
+                'git checkout master',
+                'git merge --no-ff other'
+            ].join(" && "), options);
+
+            addValidCommit();
+    
+            const event = new Push({
+                ref_name: 'master',
+                ref_type: 'branch',
+                target: getNthCommitBack(1),
+            }, options);
+    
+            await expect(event.validateCommits()).resolves.not.toThrow();
+            
+            expect(commitlint).toHaveBeenCalledWith(
+                expect.objectContaining({ from: `${getNthCommitBack(2)}^` })
+            );
+        });
+
         it("Fails when there's an invalid commit on a branch", async () => {
             addInvalidCommit();
             addValidCommit();
     
             const event = new Push({
-                ref: 'refs/heads/other',
+                ref_name: 'other',
                 ref_type: 'branch',
                 target: getNthCommitBack(1),
             }, options);
@@ -105,26 +126,44 @@ describe("src/events/push", () => {
         });
     });
 
-    describe("Validating push events for other ref types", () => {
+    describe("Skipping validation", () => {
         afterEach(() => {
-            expect(actionsInfo).toHaveBeenCalled();
-            expect(actionsInfo).toHaveBeenCalledWith(
-                expect.stringContaining('Skipping commit validation')
-            );
-
             expect(commitlint).not.toHaveBeenCalled();
         });
 
         ['tag', ''].forEach(refType => {
             it(`Skips validation for ref type: '${refType}' pushes`, async () => {
                 const event = new Push({
-                    ref: 'refs/tags/someTag',
+                    ref_name: 'someTag',
                     ref_type: refType,
                     target: '',
                 }, options);
 
                 await expect(event.validateCommits()).resolves.not.toThrow();
+
+                expect(actions.info).toHaveBeenCalled();
+                expect(actions.info).toHaveBeenCalledWith(
+                    expect.stringContaining('Skipping commit validation')
+                );
             });
+        });
+
+
+        it("Skips commit validation for pushed branches with a fast-forward merge", async () => {
+            execSync([
+                'git checkout master',
+                'git merge other'
+            ].join(" && "), options);
+    
+            const event = new Push({
+                ref_name: 'master',
+                ref_type: 'branch',
+                target: getNthCommitBack(1),
+            }, options);
+    
+            await expect(event.validateCommits()).resolves.not.toThrow();
+            expect(actions.warning).toHaveBeenCalled();
+            expect(actions.warning).toHaveBeenCalledWith('Could not find any commits to validate.');
         });
     });
 });

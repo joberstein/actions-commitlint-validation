@@ -18,9 +18,9 @@ export default class Push extends GitEvent {
      * @returns A list of refs
      */
      getRefsToCheckout(): string[] {
-        const { ref_type, ref } = this.#args;
+        const { ref_type, ref_name } = this.#args;
         
-        return ref_type === 'branch' ? [ref] : [];
+        return ref_type === 'branch' ? [ref_name] : [];
     }
 
     /**
@@ -28,42 +28,42 @@ export default class Push extends GitEvent {
      * @returns A reason for skipping validation for non-branch pushes.
      */
     getSkipValidationReason(): string | undefined {
-        const { ref_type, ref } = this.#args;
+        const { ref_type, ref_name } = this.#args;
 
         if (ref_type !== 'branch') {
-            return `Pushes for ref type: '${ref_type}' are not supported, regarding: '${ref}'.`;
+            return `Pushes for ref type: '${ref_type}' are not supported, regarding: '${ref_name}'.`;
         }
     }
     
     /**
-     * Provide a list containing the initial commit on the ref that was pushed to.
+     * Provide a list containing the initial commit that is only on the ref that was pushed to.
      * @returns A list of commit hashes
      */
     getFromCommits(): string[] {
-        const { ref } = this.#args;
+        const { ref_name } = this.#args;
         const { options } = this;
+        const currentBranchIndicator = '* ';
 
-        const refs = execSync(`git for-each-ref --format="%(refname)" refs/heads`, options)
-            .toString()
-            .trim()
-            .split('\n');
-
-        console.log(refs);
-
-        const refsToExclude = refs
-            .filter(seenRef => ref !== seenRef)
-            .join(' ');
+        const isBranchSpecificRevision = (refName: string, revision: string) => {
+            const branchesWithRevision = execSync(`git branch --contains '${revision}'`, options)
+                .toString()
+                .trim()
+                .split('\n')
+                .map(branch => branch.startsWith(currentBranchIndicator)
+                    ? branch.replace(currentBranchIndicator, '')
+                    : branch
+                );
+    
+            return branchesWithRevision.length === 1 && branchesWithRevision.includes(refName);
+        }
         
-        const [commit, ] = execSync(`git rev-list --no-merges '${ref}' --not ${refsToExclude}`, options)
+        const [commit, ] = execSync(`git rev-list '${ref_name}'`, options)
             .toString()
             .trim()
             .split('\n')
+            .filter(revision => isBranchSpecificRevision(ref_name, revision))
             .reverse();
 
-        if (!commit) {
-            throw new Error(`Failed to get initial commit: '${ref}'.`);
-        }
-
-        return [commit];
+        return [commit].filter(c => c);
     }
 }

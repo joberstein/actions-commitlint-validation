@@ -1,5 +1,5 @@
 import { ExecSyncOptions, execSync } from "child_process";
-import { info } from "@actions/core";
+import { info, warning } from "@actions/core";
 import commitlint from "../commitlint";
 
 /**
@@ -62,9 +62,14 @@ class GitEvent {
             return;
         }
 
+        const fromCommits = this.getFromCommits();
+
+        if (!fromCommits.length) {
+            warning('Could not find any commits to validate.');
+        }
+
         await Promise.all(
-            this.getFromCommits()
-                .map(from => commitlint({
+            fromCommits.map(from => commitlint({
                     from: from ? `${from}^` : undefined,
                     cwd: this.options?.cwd?.toString() || undefined,
                 }))

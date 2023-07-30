@@ -20,8 +20,8 @@ inputs:
     description: The commit sha of the event that triggered this workflow.
     default: ${{ github.sha }}
 
-  ref:
-    description: The ref (branch or tag) of the event that triggered this workflow (required for pushes).
+  ref_name:
+    description: The name of the ref (branch or tag) of the event that triggered this workflow (required for pushes).
     default: ${{ github.ref }}
 
   ref_type:

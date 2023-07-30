@@ -7,7 +7,6 @@ import PullRequest from "./pullRequest";
 
 describe("src/events/pullRequest", () => {
     const commitlint = jest.spyOn(commitlintExec, 'default');
-    const actionsInfo = jest.spyOn(actions, "info");
 
     const {
         createTempDirectory,
@@ -37,8 +36,8 @@ describe("src/events/pullRequest", () => {
     afterEach(() => {
         teardownGitRepo();
         
-        expect(actionsInfo).toHaveBeenCalled();
-        expect(actionsInfo).not.toHaveBeenCalledWith(
+        expect(actions.info).toHaveBeenCalled();
+        expect(actions.info).not.toHaveBeenCalledWith(
             expect.stringContaining('Skipping commit validation')
         );
 

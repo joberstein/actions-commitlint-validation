@@ -1,5 +1,5 @@
 interface PushEventArgs extends GitEventArgs {
-    ref: string;
+    ref_name: string;
     ref_type?: string;
 }
 

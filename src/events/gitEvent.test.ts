@@ -7,7 +7,6 @@ import GitEvent from "./gitEvent";
 
 describe("src/events/gitEvent", () => {
     const commitlint = jest.spyOn(commitlintExec, 'default');
-    const actionsInfo = jest.spyOn(actions, "info");
 
     const {
         createTempDirectory,
@@ -34,8 +33,8 @@ describe("src/events/gitEvent", () => {
     afterEach(() => {
         teardownGitRepo();
 
-        expect(actionsInfo).toHaveBeenCalled();
-        expect(actionsInfo).not.toHaveBeenCalledWith(
+        expect(actions.info).toHaveBeenCalled();
+        expect(actions.info).not.toHaveBeenCalledWith(
             expect.stringContaining('Skipping commit validation')
         );
 
