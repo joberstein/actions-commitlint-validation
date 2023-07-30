@@ -25,7 +25,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 var _GitEvent_args;
 Object.defineProperty(exports, "__esModule", { value: true });
 const child_process_1 = require("child_process");
-const commitlintClient_1 = __importDefault(require("commitlintClient"));
+const commitlint_1 = __importDefault(require("../commitlint"));
 const core_1 = require("@actions/core");
 /**
  * Represents a base Git event.
@@ -81,7 +81,7 @@ class GitEvent {
             yield Promise.all(this.getFromCommits()
                 .map(from => {
                 var _a, _b;
-                return (0, commitlintClient_1.default)({
+                return (0, commitlint_1.default)({
                     from: from ? `${from}^` : undefined,
                     cwd: ((_b = (_a = this.options) === null || _a === void 0 ? void 0 : _a.cwd) === null || _b === void 0 ? void 0 : _b.toString()) || undefined,
                 });

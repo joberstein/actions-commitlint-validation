@@ -3,7 +3,6 @@ import GitEvent from './events/gitEvent';
 import PullRequest from './events/pullRequest';
 import Push from './events/push';
 import preinstall from './preinstall';
-import { execSync } from 'child_process';
 
 export default async () => {
     const {

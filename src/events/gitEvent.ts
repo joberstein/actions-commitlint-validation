@@ -1,6 +1,6 @@
 import { ExecSyncOptions, execSync } from "child_process";
-import commitlint from "commitlintClient";
 import { info } from "@actions/core";
+import commitlint from "../commitlint";
 
 /**
  * Represents a base Git event.

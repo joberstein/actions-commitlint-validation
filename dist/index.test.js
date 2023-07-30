@@ -38,7 +38,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const child_process_1 = require("child_process");
 const actions = __importStar(require("@actions/core"));
 const util_1 = __importDefault(require("./test/util"));
-const commitlintExec = __importStar(require("./commitlintClient"));
+const commitlintExec = __importStar(require("./commitlint"));
 const index_1 = __importDefault(require("./index"));
 jest.setTimeout(20000);
 describe("src/index", () => {
