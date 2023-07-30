@@ -19,6 +19,12 @@ jobs:
         with: 
           fetch-depth: 0
 
+      - name: Fetch Refs Again
+        run: |
+          git show-ref
+          git fetch origin '+refs/heads/*:refs/remotes/origin/*'
+          git show-ref
+
       - name: Setup NodeJS
         uses: actions/setup-node@v3
         with:
