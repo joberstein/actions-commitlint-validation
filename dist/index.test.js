@@ -38,11 +38,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const child_process_1 = require("child_process");
 const actions = __importStar(require("@actions/core"));
 const util_1 = __importDefault(require("./test/util"));
+const commitlintExec = __importStar(require("./commitlint"));
 const index_1 = __importDefault(require("./index"));
+jest.setTimeout(20000);
 describe("src/index", () => {
     let tmpDir;
-    const actionsInfo = jest.spyOn(actions, "info");
-    const setFailed = jest.spyOn(actions, "setFailed");
+    const commitlint = jest.spyOn(commitlintExec, 'default');
     const { createTempDirectory, intializeGitRepo, getNthCommitBack, teardownGitRepo, teardownTestDirectory, addInvalidCommit, addValidCommit, setupTestDirectory, options, } = new util_1.default();
     beforeEach(() => {
         tmpDir = createTempDirectory();
@@ -58,26 +59,69 @@ describe("src/index", () => {
         delete process.env.INPUT_BASE_REF;
         delete process.env.INPUT_HEAD_REF;
         delete process.env.INPUT_EXTRA_CONFIG;
-        expect(actionsInfo).toHaveBeenCalled();
+        delete process.env.INPUT_REF_NAME;
+        delete process.env.INPUT_REF_TYPE;
+        expect(actions.info).toHaveBeenCalled();
     });
     it("Successfully validates a target commit", () => __awaiter(void 0, void 0, void 0, function* () {
         yield (0, index_1.default)();
-        expect(setFailed).not.toHaveBeenCalled();
+        expect(actions.setFailed).not.toHaveBeenCalled();
+        expect(commitlint).toHaveBeenCalledTimes(1);
+        expect(commitlint).toHaveBeenCalledWith({ from: `${process.env.INPUT_TARGET_REF}^` });
     }));
-    it("Successfully validates a range of commits", () => __awaiter(void 0, void 0, void 0, function* () {
+    it("Successfully validates commits for a branch push", () => __awaiter(void 0, void 0, void 0, function* () {
+        const branch = '#3';
+        (0, child_process_1.execSync)(`git checkout -qb '${branch}'`, options);
+        [...Array(3).keys()].forEach(addValidCommit);
+        process.env.INPUT_TARGET_REF = getNthCommitBack(1);
+        process.env.INPUT_REF_NAME = branch;
+        process.env.INPUT_REF_TYPE = 'branch';
+        yield (0, index_1.default)();
+        expect(actions.setFailed).not.toHaveBeenCalled();
+        expect(commitlint).toHaveBeenCalledTimes(1);
+        expect(commitlint).toHaveBeenCalledWith({ from: `${getNthCommitBack(3)}^` });
+    }));
+    it("Successfully validates commits for a pull request", () => __awaiter(void 0, void 0, void 0, function* () {
         process.env.INPUT_BASE_REF = "master";
-        process.env.INPUT_HEAD_REF = "#3";
+        process.env.INPUT_HEAD_REF = '#3';
         (0, child_process_1.execSync)(`git checkout -qb '${process.env.INPUT_HEAD_REF}'`, options);
         [...Array(3).keys()].forEach(addValidCommit);
         process.env.INPUT_TARGET_REF = getNthCommitBack(1);
         yield (0, index_1.default)();
-        expect(setFailed).not.toHaveBeenCalled();
+        expect(actions.setFailed).not.toHaveBeenCalled();
+        expect(commitlint).toHaveBeenCalledTimes(2);
+        [getNthCommitBack(3), process.env.INPUT_TARGET_REF]
+            .forEach(commit => expect(commitlint).toHaveBeenCalledWith({ from: `${commit}^` }));
+    }));
+    it("Successfully validates commits for a pull request with a detached head", () => __awaiter(void 0, void 0, void 0, function* () {
+        process.env.INPUT_BASE_REF = "master";
+        process.env.INPUT_HEAD_REF = '#3';
+        (0, child_process_1.execSync)(`git checkout -qb '${process.env.INPUT_HEAD_REF}'`, options);
+        [...Array(3).keys()].forEach(addValidCommit);
+        const fromCommit = getNthCommitBack(3);
+        (0, child_process_1.execSync)(`git checkout --detach`, options);
+        addValidCommit();
+        process.env.INPUT_TARGET_REF = getNthCommitBack(1);
+        yield (0, index_1.default)();
+        expect(actions.setFailed).not.toHaveBeenCalled();
+        expect(commitlint).toHaveBeenCalledTimes(2);
+        [fromCommit, process.env.INPUT_TARGET_REF]
+            .forEach(commit => expect(commitlint).toHaveBeenCalledWith({ from: `${commit}^` }));
+    }));
+    it("Skips commit validation for a tag push", () => __awaiter(void 0, void 0, void 0, function* () {
+        process.env.INPUT_TARGET_REF = getNthCommitBack(1);
+        process.env.INPUT_REF_NAME = 'someTag';
+        process.env.INPUT_REF_TYPE = 'tag';
+        yield (0, index_1.default)();
+        expect(actions.setFailed).not.toHaveBeenCalled();
+        expect(commitlint).not.toHaveBeenCalled();
     }));
     it("Fails validation for an invalid commit", () => __awaiter(void 0, void 0, void 0, function* () {
         addInvalidCommit();
         process.env.INPUT_TARGET_REF = getNthCommitBack(1);
         yield (0, index_1.default)();
-        expect(setFailed).toHaveBeenCalledWith('Commit validation failed.');
+        expect(commitlint).toHaveBeenCalledTimes(1);
+        expect(actions.setFailed).toHaveBeenCalledWith('Commit validation failed.');
     }));
 });
 //# sourceMappingURL=index.test.js.map
