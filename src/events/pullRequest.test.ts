@@ -1,8 +1,8 @@
 import { execSync } from "child_process";
 import * as actions from "@actions/core";
 import TestUtils from "../test/util";
-import preinstall from "../preinstall";
-import * as commitlintExec from "../commitlint";
+import preinstall from "../utils/preinstall";
+import * as commitlintExec from "../utils/commitlint";
 import PullRequest from "./pullRequest";
 
 describe("src/events/pullRequest", () => {
