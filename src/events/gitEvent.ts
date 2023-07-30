@@ -1,5 +1,5 @@
 import { ExecSyncOptions, execSync } from "child_process";
-import commitlint from "commitlint";
+import commitlint from "commitlintClient";
 import { info } from "@actions/core";
 
 /**

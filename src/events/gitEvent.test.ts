@@ -2,7 +2,7 @@ import { execSync } from "child_process";
 import * as actions from "@actions/core";
 import TestUtils from "../test/util";
 import preinstall from "../preinstall";
-import * as commitlintExec from "../commitlint";
+import * as commitlintExec from "../commitlintClient";
 import GitEvent from "./gitEvent";
 
 describe("src/events/gitEvent", () => {
