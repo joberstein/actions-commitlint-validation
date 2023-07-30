@@ -54,14 +54,14 @@ class Push extends gitEvent_1.default {
         const { options } = this;
         const currentBranchIndicator = '* ';
         const isBranchSpecificRevision = (refName, revision) => {
-            const branchesWithRevision = (0, child_process_1.execSync)(`git branch --contains '${revision}'`, options)
+            const branchesWithRevision = (0, child_process_1.execSync)(`git branch -a --contains '${revision}'`, options)
                 .toString()
                 .trim()
                 .split('\n')
                 .map(branch => branch.startsWith(currentBranchIndicator)
                 ? branch.replace(currentBranchIndicator, '')
-                : branch);
-            return branchesWithRevision.length === 1 && branchesWithRevision.includes(refName);
+                : branch)
+                .every(branch => new RegExp(`^(remotes\/origin\/)?${refName}$`).test(branch.trim()));
         };
         const [commit,] = (0, child_process_1.execSync)(`git rev-list '${ref_name}'`, options)
             .toString()

@@ -162,6 +162,7 @@ describe("src/events/push", () => {
             }, options);
     
             await expect(event.validateCommits()).resolves.not.toThrow();
+            
             expect(actions.warning).toHaveBeenCalled();
             expect(actions.warning).toHaveBeenCalledWith('Could not find any commits to validate.');
         });
