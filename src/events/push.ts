@@ -43,14 +43,18 @@ export default class Push extends GitEvent {
         const { ref } = this.#args;
         const { options } = this;
 
-        const refsToExclude = execSync(`git for-each-ref --format="%(refname)" refs/heads`, options)
+        const refs = execSync(`git for-each-ref --format="%(refname)" refs/heads`, options)
             .toString()
             .trim()
-            .split('\n')
+            .split('\n');
+
+        console.log(refs);
+
+        const refsToExclude = refs
             .filter(seenRef => ref !== seenRef)
             .join(' ');
         
-        const [commit, ] = execSync(`git rev-list --no-merges --not '${refsToExclude}' '${ref}'`, options)
+        const [commit, ] = execSync(`git rev-list --no-merges '${ref}' --not ${refsToExclude}`, options)
             .toString()
             .trim()
             .split('\n')

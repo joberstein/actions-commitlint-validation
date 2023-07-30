@@ -52,13 +52,15 @@ class Push extends gitEvent_1.default {
     getFromCommits() {
         const { ref } = __classPrivateFieldGet(this, _Push_args, "f");
         const { options } = this;
-        const refsToExclude = (0, child_process_1.execSync)(`git for-each-ref --format="%(refname)" refs/heads`, options)
+        const refs = (0, child_process_1.execSync)(`git for-each-ref --format="%(refname)" refs/heads`, options)
             .toString()
             .trim()
-            .split('\n')
+            .split('\n');
+        console.log(refs);
+        const refsToExclude = refs
             .filter(seenRef => ref !== seenRef)
             .join(' ');
-        const [commit,] = (0, child_process_1.execSync)(`git rev-list --no-merges --not '${refsToExclude}' '${ref}'`, options)
+        const [commit,] = (0, child_process_1.execSync)(`git rev-list --no-merges '${ref}' --not ${refsToExclude}`, options)
             .toString()
             .trim()
             .split('\n')

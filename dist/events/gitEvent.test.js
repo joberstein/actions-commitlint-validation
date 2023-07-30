@@ -64,7 +64,6 @@ describe("src/events/gitEvent", () => {
     });
     it("Validates a git event with no target ref", () => __awaiter(void 0, void 0, void 0, function* () {
         const event = new gitEvent_1.default({ target: '' }, options);
-        console.log((0, child_process_1.execSync)('git log', options).toString());
         yield expect(event.validateCommits()).resolves.not.toThrow();
         expect(commitlint).toHaveBeenCalledWith(expect.objectContaining({ from: undefined }));
     }));

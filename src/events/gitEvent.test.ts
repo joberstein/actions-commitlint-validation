@@ -48,7 +48,6 @@ describe("src/events/gitEvent", () => {
     
     it("Validates a git event with no target ref", async () => {
         const event = new GitEvent({ target: '' }, options);
-        console.log(execSync('git log', options).toString());
 
         await expect(event.validateCommits()).resolves.not.toThrow();
 
