@@ -7,8 +7,9 @@ class TestUtils {
         this.getNthCommitBack = (numBack) => (0, child_process_1.execSync)(`git rev-parse HEAD~${numBack - 1}`, this.options).trim();
         this.addValidCommit = () => {
             const commands = [
-                "echo invalid >> src/test.txt",
-                "git add src",
+                "echo valid >> src/test.txt",
+                "echo '   ' >> package.json",
+                "git add --all",
                 `git commit -m "chore(ci): Add valid commit."`,
             ];
             (0, child_process_1.execSync)(commands.join(" && "), this.options);
@@ -23,24 +24,30 @@ class TestUtils {
         };
         this.createTempDirectory = () => (0, child_process_1.execSync)("mktemp -d", { encoding: this.encoding }).trim();
         this.setupTestDirectory = (tmpDir) => {
-            (0, child_process_1.execSync)(`cp ${process.cwd()}/.commitlintrc.json ${tmpDir}`);
-            (0, child_process_1.execSync)(`cp ${process.cwd()}/package*.json ${tmpDir}`);
+            (0, child_process_1.execSync)([
+                `cp ${process.cwd()}/.commitlintrc.json ${tmpDir}`,
+                `cp ${process.cwd()}/package*.json ${tmpDir}`,
+                `cp ${process.cwd()}/.gitignore ${tmpDir}`,
+            ].join(' && '));
             process.chdir(tmpDir);
             (0, child_process_1.execSync)('npm install --frozen-lockfile', this.options);
         };
         this.intializeGitRepo = () => {
             (0, child_process_1.execSync)([
                 "git init",
+                "git config advice.detachedHead false",
                 "rm -rf .git/hooks",
                 "mkdir src",
                 "touch src/test.txt",
+                "git add --all",
+                "git commit -m 'chore: Add initial commit.'",
             ].join(" && "), this.options);
             [...Array(2).keys()].forEach(this.addValidCommit);
         };
         this.teardownGitRepo = () => {
             (0, child_process_1.execSync)([
-                "rm -rf .git",
-                "rm -rf src"
+                "rm -rf .git/*",
+                "rm -rf src",
             ].join(' && '), this.options);
         };
         this.teardownTestDirectory = (tmpDir) => {

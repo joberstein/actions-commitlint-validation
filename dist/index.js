@@ -12,25 +12,22 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const child_process_1 = require("child_process");
-const validateCommits_1 = __importDefault(require("./validateCommits"));
-const preinstall_1 = __importDefault(require("./preinstall"));
 const core_1 = require("@actions/core");
+const gitEvent_1 = __importDefault(require("./events/gitEvent"));
+const pullRequest_1 = __importDefault(require("./events/pullRequest"));
+const push_1 = __importDefault(require("./events/push"));
+const preinstall_1 = __importDefault(require("./preinstall"));
 exports.default = () => __awaiter(void 0, void 0, void 0, function* () {
-    const { INPUT_BASE_REF: source, INPUT_HEAD_REF: destination, INPUT_TARGET_REF: target, INPUT_EXTRA_CONFIG: extraConfig, } = process.env;
+    const { INPUT_BASE_REF: base_ref, INPUT_HEAD_REF: head_ref, INPUT_REF: ref, INPUT_REF_TYPE: ref_type, INPUT_TARGET_REF: target = '', INPUT_EXTRA_CONFIG: extraConfig, } = process.env;
+    const event = base_ref && head_ref
+        ? new pullRequest_1.default({ base_ref, head_ref, target })
+        : ref
+            ? new push_1.default({ ref, ref_type, target })
+            : new gitEvent_1.default({ target });
     try {
+        event.performCheckouts();
         (0, preinstall_1.default)(extraConfig);
-        if (source) {
-            (0, child_process_1.execSync)(`git checkout '${source}'`);
-        }
-        if (destination) {
-            (0, child_process_1.execSync)(`git checkout '${destination}'`);
-        }
-        yield (0, validateCommits_1.default)({
-            source,
-            destination,
-            target,
-        });
+        yield event.validateCommits();
     }
     catch (e) {
         (0, core_1.setFailed)(e.message);
