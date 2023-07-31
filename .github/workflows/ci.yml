@@ -19,11 +19,8 @@ jobs:
         with: 
           fetch-depth: 0
 
-      - name: Fetch Refs Again
-        run: |
-          git show-ref
-          git fetch origin '+refs/heads/*:refs/remotes/origin/*'
-          git show-ref
+      - name: Disable tracking changes to dist
+        run: git update-index --skip-worktree dist/*
 
       - name: Setup NodeJS
         uses: actions/setup-node@v3
@@ -51,11 +48,14 @@ jobs:
       - name: Execute Tests
         run: npm test -- --ci
 
+      - name: Re-enable tracking changes to dist
+        run: git update-index --no-skip-worktree dist/*
+
       - name: Push Build Files
         if: github.event == 'push'
         run: |
-          git add dist node_modules
-          git diff --staged --quiet || (git commit -m "chore: Commit dist and node_modules." && git push)
+          git add dist
+          git diff --staged --quiet || (git commit -m "chore: Commit changes to dist." && git push)
 
       - name: Deploy Application
         uses: cycjimmy/semantic-release-action@v3
