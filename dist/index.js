@@ -66616,7 +66616,6 @@ exports["default"] = (packageString, options) => {
         const command = (0, fs_1.existsSync)('yarn.lock')
             ? `yarn add ${packages} --silent`
             : `npm install ${packages} --silent`;
-        console.log(options);
         (0, child_process_1.execSync)(command, options);
     }
 };
