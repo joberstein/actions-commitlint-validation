@@ -19,9 +19,6 @@ jobs:
         with: 
           fetch-depth: 0
 
-      - name: Disable tracking changes to dist
-        run: git update-index --skip-worktree dist/*
-
       - name: Setup NodeJS
         uses: actions/setup-node@v3
         with:
@@ -33,11 +30,17 @@ jobs:
 
       - name: Build Application
         run: npm run build
+      
+      - name: Disable tracking changes to dist
+        run: git update-index --skip-worktree dist/*
 
       - name: Validate Commits
         uses: ./
         with:
           extra_config: "@joberstein12/commitlint-config"
+
+      - name: Re-enable tracking changes to dist
+        run: git update-index --no-skip-worktree dist/*
 
       - name: Set Default Git Branch
         run: |
@@ -47,9 +50,6 @@ jobs:
 
       - name: Execute Tests
         run: npm test -- --ci
-
-      - name: Re-enable tracking changes to dist
-        run: git update-index --no-skip-worktree dist/*
 
       - name: Push Build Files
         if: github.event == 'push'
