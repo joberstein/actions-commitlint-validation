@@ -4,13 +4,13 @@ This Github action uses commitlint to validate commits on different events for a
 
 ## Continuous Integration
 
-The Github Workflow for this repo automatically commits up-to-date dist and node_modules based on the committed source code (src and package-lock.json).
+The Github Workflow for this repo automatically commits up-to-date dist based on the committed source code (src and package-lock.json).
 
 # Scenarios
 
 Validate commits for events like:
 
- - Push - validates the commit that was pushed (e.g. to a branch)
+ - Push - validates all commits on the branch that was pushed to (tag pushes are not supported)
  - Pull Request - validates all of the commits in a given pull request
 
 # Usage
@@ -27,12 +27,12 @@ Validate commits for events like:
 ## Available Arguments
 
 ```yaml
-# The source of pull request that triggered this workflow (populated by default for pull requests).
+# The source of pull request that triggered this workflow (required for pull requests).
 # Example: main
 # Default: ${{ github.base_ref }}
 base_ref: string
 
-# The destination of the pull request that triggered this workflow (populated by default for pull requests).
+# The destination of the pull request that triggered this workflow (required for pull requests).
 # Example: feature
 # Default: ${{ github.head_ref }}
 head_ref: string
@@ -41,6 +41,16 @@ head_ref: string
 # Example: 42402264176cf7d82c9811c97707133c176b2f63
 # Default: ${{ github.sha }}
 target_ref: string
+
+# The name of the ref (branch or tag) of the event that triggered this workflow (required for pushes).
+# Example: main
+# Default: ${{ github.ref_name }}
+ref_name: string
+
+# The ref type of the event that triggered this workflow (required for pushes). Only branch refs are validated.
+# Example: branch
+# Default: ${{ github.ref_type }}
+ref_type: string
 
 # An optional newline-separated list of commitlint-config npm packages to install.
 # Example: |
