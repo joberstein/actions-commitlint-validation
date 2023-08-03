@@ -1,7 +1,7 @@
 #!/bin/bash
 
 SOURCE_BRANCH=$(git branch --show-current)
-TARGET_BRANCH="release-test"
+TARGET_BRANCH="release"
 VERSION=$1
 
 if [ -z $VERSION ];

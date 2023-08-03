@@ -6,6 +6,10 @@ This Github action uses commitlint to validate commits on different events for a
 
 The Github Workflow for this repo automatically commits up-to-date dist based on the committed source code (src and package-lock.json).
 
+The deploy script (./deploy.sh) will deploy to the 'release' breanch, which is orphaned so that it's history and contents is distinct from the 'master' branch, which contains all of the original source code.
+
+Callers wishing to use this action simply need to reference this repo per the standard convention (i.e. joberstein/actions-commitlint-validation@v1.0.1).
+
 # Scenarios
 
 Validate commits for events like:
