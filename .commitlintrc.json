@@ -1,0 +1,15 @@
+{
+    "extends": ["@joberstein12"],
+    "rules": {
+        "scope-enum": [2, "always", [
+            "action",
+            "ci",
+            "deps",
+            "docs",
+            "index",
+            "setup",
+            "tests",
+            "types"
+        ]]
+    }
+}

@@ -1,0 +1,32 @@
+name: Validate Commits with Commitlint
+description: Validate commits with commitlint using Github Actions.
+author: Jesse Oberstein
+branding:
+  icon: git-commit
+  color: green
+runs:
+  using: 'node16'
+  main: 'dist/action.js'
+inputs:
+  base_ref:
+    description: The source of pull request that triggered this workflow (required for pull requests).
+    default: ${{ github.base_ref }}
+
+  head_ref:
+    description: The destination of the pull request that triggered this workflow (required for pull requests).
+    default: ${{ github.head_ref }}
+
+  target_ref:
+    description: The commit sha of the event that triggered this workflow.
+    default: ${{ github.sha }}
+
+  ref_name:
+    description: The name of the ref (branch or tag) of the event that triggered this workflow (required for pushes).
+    default: ${{ github.ref_name }}
+
+  ref_type:
+    description: The ref type of the event that triggered this workflow (required for pushes). Only branch refs are validated.
+    default: ${{ github.ref_type }}
+  
+  extra_config:
+    description: A newline-separated list of commitlint-config npm packages to install.
