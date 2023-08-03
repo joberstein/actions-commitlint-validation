@@ -1,1 +1,0 @@
-jest.mock("@actions/core");

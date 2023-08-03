@@ -1,6 +1,0 @@
-{
-    "clearMocks": true,
-    "testPathIgnorePatterns": [ "/dist/", "/node_modules/" ],
-    "modulePaths": ["<rootDir>/src/"],
-    "setupFiles": [ "<rootDir>/src/test/setup.ts" ]
-}
