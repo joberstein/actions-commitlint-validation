@@ -1,7 +1,7 @@
 import { execSync } from "child_process";
 import * as actions from "@actions/core";
 import TestUtils from "./test/util";
-import * as commitlintExec from "./commitlint";
+import * as commitlintExec from "./utils/commitlint";
 import run from "./index";
 
 jest.setTimeout(20_000);

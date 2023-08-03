@@ -2,7 +2,7 @@ import { setFailed } from '@actions/core';
 import GitEvent from './events/gitEvent';
 import PullRequest from './events/pullRequest';
 import Push from './events/push';
-import preinstall from './preinstall';
+import preinstall from './utils/preinstall';
 
 export default async () => {
     const {

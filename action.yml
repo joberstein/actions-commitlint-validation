@@ -6,7 +6,7 @@ branding:
   color: green
 runs:
   using: 'node16'
-  main: 'dist/action.js'
+  main: 'dist/index.js'
 inputs:
   base_ref:
     description: The source of pull request that triggered this workflow (required for pull requests).
