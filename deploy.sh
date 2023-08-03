@@ -10,6 +10,9 @@ then
     exit
 fi
 
+echo "Clearing all changes..."
+git checkout .
+
 echo "Checking out '$TARGET_BRANCH'..."
 git checkout "$TARGET_BRANCH" \
 || exit 1
