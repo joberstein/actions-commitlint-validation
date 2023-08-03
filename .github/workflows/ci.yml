@@ -40,12 +40,6 @@ jobs:
       - name: Execute Tests
         run: npm test -- --ci
 
-      - name: Push Build Files
-        if: github.event_name == 'push'
-        run: |
-          git add dist
-          git diff --staged --quiet || (git commit -m "chore: Commit changes to dist." && git push)
-
       - name: Validate Commits
         uses: ./
         with:
