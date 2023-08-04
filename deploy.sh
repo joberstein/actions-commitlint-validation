@@ -3,6 +3,7 @@
 SOURCE_BRANCH=$(git branch --show-current)
 TARGET_BRANCH="release"
 VERSION=$1
+NEW_TAG=v${VERSION}-dist
 
 if [ -z $VERSION ];
 then
@@ -30,8 +31,8 @@ git add -vA
 echo "Committing files..."
 git commit -vm "Deploy $VERSION"
 
-echo "Adding tag 'v${VERSION}'"
-git tag "v${VERSION}"
+echo "Adding tag '${NEW_TAG}'"
+git tag "$NEW_TAG"
 
 echo "Pushing commit..."
 git push origin -u "${TARGET_BRANCH}" \
