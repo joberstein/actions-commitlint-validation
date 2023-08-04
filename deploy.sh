@@ -3,7 +3,10 @@
 SOURCE_BRANCH=$(git branch --show-current)
 TARGET_BRANCH="release"
 VERSION=$1
-NEW_TAG=v${VERSION}-dist
+MAJOR=$(echo "$VERSION" | cut -d '.' -f 1)
+MINOR=$(echo "$VERSION" | cut -d '.' -f 1-2)
+TAGS=("$MAJOR" "$MINOR" "$VERSION")
+
 
 if [ -z $VERSION ];
 then
@@ -31,10 +34,13 @@ git add -vA
 echo "Committing files..."
 git commit -vm "Deploy $VERSION"
 
-echo "Adding tag '${NEW_TAG}'"
-git tag "$NEW_TAG"
+for tagVersion in ${TAGS[@]}; do
+    TAG="v${tagVersion}-dist"
+    echo "Adding tag: '${TAG}'"
+    git tag --force "$TAG"
+done
 
 echo "Pushing commit..."
 git push origin -u "${TARGET_BRANCH}" \
-&& git push --tags \
+&& git push --force --tags \
 || exit 1

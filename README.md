@@ -8,7 +8,9 @@ The Github Workflow for this repo automatically commits up-to-date dist based on
 
 The deploy script (./deploy.sh) will deploy to the 'release' breanch, which is orphaned so that it's history and contents is distinct from the 'master' branch, which contains all of the original source code.
 
-Callers wishing to use this action should reference this repo by a versioned tag with the 'dist' suffix (i.e. joberstein/actions-commitlint-validation@v1.0.1-dist). The source code is released under the standard version tag (vX.Y.Z), whereas the actual deploy artifacts are accessible with (vX.Y.Z-dist) for the same version. The source code does not contain 'node_modules', the 'dist' folder, or any other deploy artifacts.
+Callers wishing to use this action should reference this repo by a versioned tag with the 'dist' suffix. (i.e. joberstein/actions-commitlint-validation@v1.0.1-dist). This action can be referenced by any major, minor, or patch tag.
+
+The source code is released under the standard version tag (vX.Y.Z), whereas the actual deploy artifacts are accessible with (vX.Y.Z-dist) for the same version. The source code does not contain 'node_modules', the 'dist' folder, or any other deploy artifacts.
 
 # Scenarios
 
