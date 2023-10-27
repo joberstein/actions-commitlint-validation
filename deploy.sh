@@ -21,12 +21,19 @@ echo "Checking out '$TARGET_BRANCH'..."
 git checkout "$TARGET_BRANCH" \
 || exit 1
 
+echo "Saving dist files..."
+git add dist/ \
+&& git stash push dist/
+
 echo "Removing all extra files..."
 git rm -rf . \
 && rm -rf node_modules
 
 echo "Copying files from '${SOURCE_BRANCH}' to '${TARGET_BRANCH}'"
 git checkout "${SOURCE_BRANCH}" action.yml package.json package-lock.json
+
+echo "Restoring dist files..."
+git stash pop
 
 echo "Adding files..."
 git add -vA
