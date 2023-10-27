@@ -17,13 +17,13 @@ fi
 echo "Clearing all changes..."
 git checkout .
 
+echo "Saving dist files..."
+git add -f dist/ \
+&& git stash push dist/
+
 echo "Checking out '$TARGET_BRANCH'..."
 git checkout "$TARGET_BRANCH" \
 || exit 1
-
-echo "Saving dist files..."
-git add dist/ \
-&& git stash push dist/
 
 echo "Removing all extra files..."
 git rm -rf . \
