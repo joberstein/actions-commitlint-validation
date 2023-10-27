@@ -5,6 +5,7 @@
             "action",
             "ci",
             "deps",
+            "deps-dev",
             "docs",
             "index",
             "setup",
