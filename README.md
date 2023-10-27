@@ -25,9 +25,9 @@ Validate commits for events like:
 
 ```yaml
 - name: Validate Commits
-  uses: joberstein/actions-commitlint-validation@v1.0.0-dist
+  uses: joberstein/actions-commitlint-validation@v1-dist
   with:
-    extra_config: @joberstein12/commitlint-config
+    extra_config: "@joberstein12/commitlint-config"
 ```
 
 ## Available Arguments
